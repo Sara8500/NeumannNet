@@ -3,7 +3,7 @@ import torchvision
 from src.torchvision_transforms import transform_train
 
 from src.utilities import show_tensor_image
-from src.blur_operators_cifar import blur_model_simple, add_gaussian_noise, blur_gramian
+from src.blur_operators_cifar import blur_model_simple, corruption_model_add_gaussian_noise, blur_gramian, identity
 from src.neumann_network import NeumannNetwork
 
 import torch.backends.cudnn as cudnn
@@ -17,11 +17,12 @@ def main():
     #### Parameters: ####
     dataset_root_dir = "./data"
     batchsize = 128     # 1
-
+    corruption_model = corruption_model_add_gaussian_noise # or this one : corruption_model_add_gaussian_noise
+    forward_adjoint= blur_model_simple
+    forward_gramian= blur_gramian
     learning_rate = 1e-3
     B = 6
-
-    number_of_epochs_to_train = 1            # 1
+    number_of_epochs_to_train = 1
     checkpoint_name = "train_cifar10_v0.ckpt"
 
 
@@ -31,8 +32,8 @@ def main():
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batchsize, shuffle=True, num_workers=1);
 
     # Create Neumann Network instance for blur/deblur operation
-    NeumannNet = NeumannNetwork(num_blocks=B, learning_rate=learning_rate, forward_adjoint=blur_model_simple,
-                                forward_gramian=blur_gramian, corruption_model=add_gaussian_noise)
+    NeumannNet = NeumannNetwork(num_blocks=B, learning_rate=learning_rate, forward_adjoint=forward_adjoint,
+                                forward_gramian=forward_gramian, corruption_model=corruption_model)
 
 
     # Train Neumann Network
