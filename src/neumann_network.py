@@ -1,14 +1,12 @@
-#from src.resnet import ResNet18
 from src.neuralnet import RegularizerNet
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
 import numpy as np
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
+#device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = 'cpu'
 
 class NeumannNetwork:
 
@@ -23,9 +21,10 @@ class NeumannNetwork:
 
         self.netR = RegularizerNet()
 
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.netR.to(device)
+        #device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        device = 'cpu'
 
+        self.netR.to(device)
 
         if device == 'cuda':
             print("cuda available.")
@@ -81,19 +80,17 @@ class NeumannNetwork:
             if batch_id >= n_batches:
                 break
 
-            storage_test_images[batch_id,:,:,:] = data.numpy()[0,:, :, :]
+            storage_test_images[batch_id, :, :, :] = data.numpy()[0, :, :, :]
 
             data = data.to(device)
 
-            corrupted_blurred_data = self.corruption_model(self.forward_adjoint(data))
-            storage_distorted_images[batch_id,:,:,:] = corrupted_blurred_data.numpy()[0,:, :, :]
-            output = self.pass_through_net(corrupted_blurred_data)
-            storage_reconstructed_images[batch_id,:,:,:] = output.detach().numpy()[0,:, :, :]
+            corrupted_data = self.corruption_model(self.forward_adjoint(data))
+            storage_distorted_images[batch_id, :, :, :] = corrupted_data.numpy()[0, :, :, :]
+            output = self.pass_through_net(corrupted_data)
+            storage_reconstructed_images[batch_id, :, :, :] = output.detach().numpy()[0, :, :, :]
 
             loss = self.criterion(output, data)
             print("testing loss: ", loss)
 
         return storage_test_images, storage_distorted_images, storage_reconstructed_images, loss
-
-
 
