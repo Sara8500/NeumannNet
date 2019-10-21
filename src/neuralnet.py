@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -6,6 +7,8 @@ class RegularizerNet(nn.Module):
 
     def __init__(self):
         super(RegularizerNet, self).__init__()
+
+        self.eta = nn.Parameter(torch.FloatTensor([0.1]), requires_grad=True) #initialized to 0.1
 
         self.conv_layer_initial = nn.Conv2d(3, 128, kernel_size=1, padding=0, bias=0.001)
 

@@ -10,7 +10,7 @@ import os
 def main():
     #### Parameters: ####
 
-    operator_name = "burring_and_AWGN" # or AWGN, or burring_and_AWGN
+    operator_name = "burring_and_AWGN_home" # or AWGN, or burring_and_AWGN
     dataset_root_dir = "./data"
     batchsize = 128     # 1
     corruption_model = corruption_model_add_gaussian_noise
@@ -18,7 +18,7 @@ def main():
     forward_gramian= blur_gramian
     learning_rate = 1e-3
     B = 6
-    number_of_epochs_to_train = 5
+    number_of_epochs_to_train = 1
 
 
 
@@ -30,6 +30,17 @@ def main():
     # Create Neumann Network instance for blur/deblur operation
     NeumannNet = NeumannNetwork(num_blocks=B, learning_rate=learning_rate, forward_adjoint=forward_adjoint,
                                 forward_gramian=forward_gramian, corruption_model=corruption_model)
+
+    print('----------------------------')
+    print('state dictionary:')
+    print(NeumannNet.netR.state_dict().keys())
+    print("eta: ", NeumannNet.netR.state_dict()['eta'])
+    print('----------------------------')
+
+    print('----------------------------')
+    print('netR.parameters()')
+    print(NeumannNet.netR.parameters())
+    print('----------------------------')
 
     # Train Neumann Network
     for epoch in range(0, number_of_epochs_to_train):

@@ -16,7 +16,7 @@ class NeumannNetwork:
         self.forward_adjoint = forward_adjoint
         self.forward_gramian = forward_gramian
         self.corruption_model = corruption_model
-        self.eta = 0.1 #fixme, make trainable?
+        #self.eta = 0.1 #eta is trainable -> moved into neural net
         self.B = num_blocks
 
         self.netR = RegularizerNet()
@@ -35,13 +35,13 @@ class NeumannNetwork:
 
     def pass_through_net(self, y_tensor):
         # initialize runner
-        runner = self.eta * self.forward_adjoint(y_tensor)
+        runner = self.netR.eta * self.forward_adjoint(y_tensor)
         neumann_sum = runner
 
 
         # run through B blocks
         for i in range(0, self.B):
-            linear_component = runner - self.eta * self.forward_gramian(runner)
+            linear_component = runner - self.netR.eta * self.forward_gramian(runner)
             regularizer_output = self.netR.forward(runner)
             learned_component = -regularizer_output
 
@@ -66,6 +66,8 @@ class NeumannNetwork:
             print("loss: ", loss)
             loss.backward()
             self.optimizer.step()
+
+            print("eta: ", self.netR.state_dict()['eta'])
 
     def test(self, dataloader, n_batches):
 
