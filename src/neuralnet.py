@@ -19,9 +19,14 @@ class RegularizerNet(nn.Module):
         self.conv_layer_1 = nn.Conv2d(128, 128, kernel_size=1, stride=1, padding=0, bias=0.001)
         self.conv_layer_2 = nn.Conv2d(128, 3, kernel_size=1, stride=1, padding=0, bias=0.001)
 
-    def forward(self, x):
+        nn.init.xavier_uniform_(self.conv_layer_0.weight)
+        nn.init.xavier_uniform_(self.conv_layer_1.weight)
+        nn.init.xavier_uniform_(self.conv_layer_2.weight)
 
-# todo: remove "patch mean"
+    def forward(self, x):
+        # removing mean of tensor
+        mean = torch.mean(x)
+        print("removing mean: ", mean)
 
         out = self.conv_layer_initial(x)
         out = F.relu(out)
@@ -32,8 +37,8 @@ class RegularizerNet(nn.Module):
         out = F.relu(out)
         out = self.conv_layer_2(out)
 
-#    todo: add "patch mean"
-#    todo: add bias according to paper (also to residual block)
+        # adding mean again
+        out = out + mean
 
         return out
 
@@ -45,6 +50,9 @@ class ResidualBlock(nn.Module):
 
         self.conv_layer_1 = nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1, bias=0.001)
         self.conv_layer_2 = nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1, bias=0.001)
+
+        nn.init.xavier_uniform_(self.conv_layer_1.weight)
+        nn.init.xavier_uniform_(self.conv_layer_2.weight)
 
     def forward(self, x):
         out = self.conv_layer_1(x)

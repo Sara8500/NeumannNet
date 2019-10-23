@@ -23,7 +23,7 @@ class NeumannNetwork:
         self.netR = RegularizerNet()
 
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        #device = 'cpu'
+        # device = 'cpu'
 
         self.netR.to(device)
 
@@ -32,13 +32,12 @@ class NeumannNetwork:
             cudnn.benchmark = True
 
         self.criterion = nn.MSELoss()
-        self.optimizer = optim.SGD(self.netR.parameters(), lr=self.learning_rate, momentum=0.9, weight_decay=5e-4)
+        self.optimizer = optim.Adam(self.netR.parameters(), lr=self.learning_rate)
 
     def pass_through_net(self, y_tensor):
         # initialize runner
         runner = self.netR.eta * self.forward_adjoint(y_tensor)
         neumann_sum = runner
-
 
         # run through B blocks
         for i in range(0, self.B):
@@ -60,12 +59,14 @@ class NeumannNetwork:
             corrupted_blurred_data = self.corruption_model(self.forward_adjoint(data))
 
             self.optimizer.zero_grad()
+            print("eta after setting zero_grad: ", self.netR.eta.grad)
 
             output = self.pass_through_net(corrupted_blurred_data)
 
             loss = self.criterion(output, data)
             print("loss: ", loss)
             loss.backward()
+            print("eta after loss.backward(): ", self.netR.eta.grad)
             self.optimizer.step()
             print("eta: ", self.netR.state_dict()['eta'])
 
