@@ -1,7 +1,7 @@
 import torch
 import torchvision
 from src.torchvision_transforms import transform_train
-from src.blur_operators_cifar import blur_model_simple, corruption_model_add_gaussian_noise, blur_gramian, identity
+from src.superres_operators_cifar import blur_gauss_model, identity, blur_gramian
 from src.neumann_network import NeumannNetwork
 from datetime import datetime
 import os
@@ -10,11 +10,11 @@ import os
 def main():
     #### Parameters: ####
 
-    operator_name = "burring_and_AWGN_with_trainedgui_eta" # or AWGN, or burring_and_AWGN
+    operator_name = "gaussian_blur"   # burring_and_AWGN_with_trainedgui_eta or AWGN, or burring_and_AWGN
     dataset_root_dir = "./data"
     batchsize = 128     # 1
-    corruption_model = corruption_model_add_gaussian_noise
-    forward_adjoint= blur_model_simple
+    corruption_model = identity
+    forward_adjoint= blur_gauss_model
     forward_gramian= blur_gramian
     learning_rate = 1e-3
     B = 6

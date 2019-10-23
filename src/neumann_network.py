@@ -5,8 +5,9 @@ import torch.optim as optim
 import torch.backends.cudnn as cudnn
 import numpy as np
 
-#device = 'cuda' if torch.cuda.is_available() else 'cpu'
-device = 'cpu'
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+# device = 'cpu'
+
 
 class NeumannNetwork:
 
@@ -16,13 +17,13 @@ class NeumannNetwork:
         self.forward_adjoint = forward_adjoint
         self.forward_gramian = forward_gramian
         self.corruption_model = corruption_model
-        #self.eta = 0.1 #eta is trainable -> moved into neural net
+        # self.eta = 0.1 #eta is trainable -> moved into neural net
         self.B = num_blocks
 
         self.netR = RegularizerNet()
 
-        #device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        device = 'cpu'
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        #device = 'cpu'
 
         self.netR.to(device)
 
@@ -66,7 +67,6 @@ class NeumannNetwork:
             print("loss: ", loss)
             loss.backward()
             self.optimizer.step()
-
             print("eta: ", self.netR.state_dict()['eta'])
 
     def test(self, dataloader, n_batches):

@@ -6,8 +6,8 @@ blur_kernel_size = 3  # kernel size, should match padding in order to keep outpu
 padding = 1
 noise_stddev = 0.01
 
-#device = 'cuda' if torch.cuda.is_available() else 'cpu'
-device = 'cpu'
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+# device = 'cpu'
 
 
 def get_blur_kernel(blur_width):

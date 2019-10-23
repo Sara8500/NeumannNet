@@ -9,7 +9,7 @@ from src.blur_operators_cifar import blur_model_simple, blur_gramian, corruption
 def main():
     #### Parameters: ####
     dataset_root_dir = "./data"
-    transform = transform_to_tensor_only    # or transform_train
+    transform = transform_train    # two options: transform_train or transform_to_tensor
     num_pictures = 3
 
     ####################
