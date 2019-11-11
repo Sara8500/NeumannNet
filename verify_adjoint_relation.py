@@ -13,10 +13,11 @@ n = 3*32*32
 # torch.dot neeeds two 1D tensors: https://discuss.pytorch.org/t/how-to-do-dot-product-of-two-tensors/3984
 # reshape vs squeeze and unsqueeze:  https://deeplizard.com/learn/video/fCVuiW9AFzY
 
+# < X.u , p >
 res1 = torch.dot(blur_model_simple(u).reshape([1,n]).squeeze(),p.reshape([1,n]).squeeze())
 print("res1: ", res1)
 
-
+# < u , X'.p >
 res2 = torch.dot(u.reshape([1,n]).squeeze(), blur_model_simple(p).reshape([1,n]).squeeze())
 print("res2: ", res2)
 
